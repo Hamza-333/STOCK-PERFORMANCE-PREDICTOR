@@ -41,7 +41,7 @@ def Narrow_down(ticker, sector):
     data = pd.read_csv('Sector_info.csv')
     lst = []
     for val in data.values:
-        if val[-1].lower() == sector:
+        if val[-1].lower() == sector.lower():
             lst.append(val[1])
     lst.append(ticker)
     return lst
@@ -153,7 +153,7 @@ def Performance():
             stock_change = round(((end_price - first_price) / first_price) * 100, 2)
             sp500_change = round(((sp500_df.values[-1][-3] - sp500_df.values[0][-3]) / sp500_df.values[0][-3]) * 100, 2)
             diff = stock_change - sp500_change
-            if diff > 5:
+            if diff > 0:
                 tmp['Performance'].append('Outperform')
             else:
                 tmp['Performance'].append('Underperform')
@@ -163,6 +163,8 @@ def Performance():
     tmp_df = pd.DataFrame(tmp)
     df = pd.concat([df, tmp_df], axis = 1)
     df.to_csv('Performance_df.csv')      
+
+    return stock_change, sp500_change
 
 def Dataset():
 
@@ -196,7 +198,7 @@ def Dataset():
   
     return X, y
 
-def Analysis():
+def Analysis(stock, sp500, amount, ticker):
 
     X, y = Dataset()
     invest = []
@@ -205,9 +207,14 @@ def Analysis():
     # print(X[:-test_size])
     count = 0
     if clf.predict([X[-1]]) == 1:
-        print('The company will outperform the market by at least 5%')
+        print('The company will outperform the market by {a}%'.format(a = stock -sp500))
+        
     else:
         print('The company will underperform compared to the market')
+    algo_return = amount + (amount * stock)
+    market_return = amount + (amount* sp500)
+    print('Investing in {ticker} will give you a return of {algo} in one year'.format(ticker = ticker, algo = algo_return))
+    print('Investing in the S&P500 will give you a return of {sp500} in one year'.format(sp500 = market_return))
     # for i in range(test_size + 1):
     #     # print(X[-i])
     #     if clf.predict([X[-i]])[0] == y[-i]:
@@ -218,6 +225,7 @@ def Analysis():
     # print('Accuracy:', (count/test_size) * 100)
     # print(invest)
 if __name__ == '__main__':
+    amount = int(input('How much are you looking to invest?'))
     ticker = 'MSFT'
     sector = 'Information Technology'
     # ticker = input('Enter a ticker')
@@ -232,8 +240,8 @@ if __name__ == '__main__':
     # 9. Health Care\n\
     # 10. Communication Services').lower()
     # create_df(ticker, sector, d)
-    clean_data()
+    # clean_data()
     historic_data(ticker, sector)
-    Performance()
-    Analysis()
-# Dataset()
+    stock, sp500 = Performance()
+    Analysis(stock, sp500, amount, ticker)
+
