@@ -47,13 +47,7 @@ def Narrow_down(ticker, sector):
     return lst
 
 def create_df(ticker, sector, d):
-    # with open('sp500.csv', 'r') as f:
-    #     sp500 = f.read()
-    # sp500 = (sp500.split(','))
-    # sp500_random = np.random.permutation(sp500)
 
-
-    # print(sp500)
     tickers = Narrow_down(ticker, sector)
     for comp in tickers:
         data = yf.get_stats(comp)
@@ -119,9 +113,7 @@ def clean_data():
     df.to_csv('df_cleaned.csv')
 def historic_data(ticker, sector):
     tickers = Narrow_down(ticker, sector)
-    # with open('sp500.csv', 'r') as f:
-    #     sp500 = f.read()
-    # sp500 = (sp500.split(','))
+
     df = yf.get_data(tickers[0], start_date = '02/04/2020', end_date = '02/04/2021', interval = '1mo')
     for i in range(1, len(tickers)):
         d = yf.get_data(tickers[i], start_date = '02/04/2020', end_date = '02/04/2021', interval = '1mo')
@@ -194,7 +186,7 @@ def Dataset():
     y = (df['Performance'].replace('Underperform', 0).replace('Outperform', 1).values)
    
     X = preprocessing.scale(X)
-    # Z = df['Ticker'].values
+
   
     return X, y
 
@@ -204,7 +196,7 @@ def Analysis(stock, sp500, amount, ticker):
     invest = []
     clf = svm.SVC(kernel = 'linear', C= 1.0)
     clf.fit(X[:-1], y[:-1])
-    # print(X[:-test_size])
+
     count = 0
     if clf.predict([X[-1]]) == 1:
         print('The company will outperform the market by {a}%'.format(a = stock -sp500))
@@ -215,15 +207,7 @@ def Analysis(stock, sp500, amount, ticker):
     market_return = round(amount + (amount* (sp500 / 100)), 2)
     print('Investing in {ticker} will give you a return of {algo} in one year'.format(ticker = ticker, algo = algo_return))
     print('Investing in the S&P500 will give you a return of {sp500} in one year'.format(sp500 = market_return))
-    # for i in range(test_size + 1):
-    #     # print(X[-i])
-    #     if clf.predict([X[-i]])[0] == y[-i]:
-    #         count += 1
-    #     if clf.predict([X[i]])[0] == 1:
-    #         invest.append(Z[i])
 
-    # print('Accuracy:', (count/test_size) * 100)
-    # print(invest)
 if __name__ == '__main__':
     amount = int(input('How much are you looking to invest?'))
     # ticker = 'MSFT'
