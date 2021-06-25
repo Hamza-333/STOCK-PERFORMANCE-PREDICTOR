@@ -8,17 +8,17 @@ import yahoo_fin.stock_info as yf
 import html5lib
 import numpy as np
 
-# data_url = 'https://datahub.io/core/s-and-p-500-companies/datapackage.json'
+data_url = 'https://datahub.io/core/s-and-p-500-companies/datapackage.json'
 
-# package = datapackage.Package(data_url)
+package = datapackage.Package(data_url)
 
 
-# resources = package.resources
-# for resource in resources:
-#     if resource.tabular:
-#         data = pd.read_csv(resource.descriptor['path'])
+resources = package.resources
+for resource in resources:
+    if resource.tabular:
+        data = pd.read_csv(resource.descriptor['path'])
         
-# data.to_csv('Sector_info.csv')
+data.to_csv('Sector_info.csv')
 
 data = pd.read_csv('msft.csv')
 att = data['Attribute'].to_list()
@@ -122,11 +122,11 @@ def historic_data(ticker, sector):
     # with open('sp500.csv', 'r') as f:
     #     sp500 = f.read()
     # sp500 = (sp500.split(','))
-    df = yf.get_data(tickers[0], start_date = '01/04/2020', end_date = '01/04/2021', interval = '1mo')
+    df = yf.get_data(tickers[0], start_date = '02/04/2020', end_date = '02/04/2021', interval = '1mo')
     for i in range(1, len(tickers)):
-        d = yf.get_data(tickers[i], start_date = '01/04/2020', end_date = '01/04/2021', interval = '1mo')
+        d = yf.get_data(tickers[i], start_date = '02/04/2020', end_date = '02/04/2021', interval = '1mo')
         df = df.append(d, ignore_index = False)
-    sp500_df = yf.get_data('^GSPC', start_date = '01/04/2020', end_date = '01/04/2021', interval = '1mo')
+    sp500_df = yf.get_data('^GSPC', start_date = '02/04/2020', end_date = '02/04/2021', interval = '1mo')
   
    
     df.to_csv('historic_data.csv')
@@ -139,8 +139,8 @@ def Performance():
     sp500_df = pd.read_csv('sp500_data.csv')
 
     tmp = {'Performance': []}
-    start_date = '2020-02-01'
-    end_date = '2021-01-01'
+    start_date = '2020-02-02'
+    end_date = '2021-01-02'
     flag = True
     for row in range(len(historic_df.values) - 1):
         ticker = historic_df.values[row][-1]
@@ -211,8 +211,8 @@ def Analysis(stock, sp500, amount, ticker):
         
     else:
         print('The company will underperform compared to the market')
-    algo_return = amount + (amount * stock)
-    market_return = amount + (amount* sp500)
+    algo_return = round(amount + (amount * (stock / 100)), 2)
+    market_return = round(amount + (amount* (sp500 / 100)), 2)
     print('Investing in {ticker} will give you a return of {algo} in one year'.format(ticker = ticker, algo = algo_return))
     print('Investing in the S&P500 will give you a return of {sp500} in one year'.format(sp500 = market_return))
     # for i in range(test_size + 1):
@@ -226,21 +226,20 @@ def Analysis(stock, sp500, amount, ticker):
     # print(invest)
 if __name__ == '__main__':
     amount = int(input('How much are you looking to invest?'))
-    ticker = 'MSFT'
+    # ticker = 'MSFT'
     sector = 'Information Technology'
-    # ticker = input('Enter a ticker')
-    # sector = input('Choose from the following sectors: \n    1. Consumer \n\
-    # 2. Information Technology\n\
-    # 3. Industrials \n\
-    # 4. Utilities\n\
-    # 5. Financials\n\
-    # 6. Materials\n\
-    # 7. Real Estate \n\
-    # 8. Energy\n\
-    # 9. Health Care\n\
-    # 10. Communication Services').lower()
-    # create_df(ticker, sector, d)
-    # clean_data()
+    ticker = input('Enter a ticker')
+    sector = input('Choose from the following sectors: \n    1. Consumer \n\
+    2. Information Technology\n\
+    3. Industrials \n\
+    4. Utilities\n\
+    5. Financials\n\
+    6. Materials\n\
+    7. Real Estate \n\
+    8. Energy\n\
+    9. Health Care\n\
+    10. Communication Services').lower()
+    
     historic_data(ticker, sector)
     stock, sp500 = Performance()
     Analysis(stock, sp500, amount, ticker)
