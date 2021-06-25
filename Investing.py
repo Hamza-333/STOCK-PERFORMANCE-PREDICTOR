@@ -210,7 +210,7 @@ def Analysis(stock, sp500, amount, ticker):
 
 if __name__ == '__main__':
     amount = int(input('How much are you looking to invest?'))
-    # ticker = 'MSFT'
+
     sector = 'Information Technology'
     ticker = input('Enter a ticker')
     sector = input('Choose from the following sectors: \n    1. Consumer \n\
@@ -223,7 +223,8 @@ if __name__ == '__main__':
     8. Energy\n\
     9. Health Care\n\
     10. Communication Services').lower()
-    
+    create_df(ticker, sector, d)
+    clean_data()
     historic_data(ticker, sector)
     stock, sp500 = Performance()
     Analysis(stock, sp500, amount, ticker)
