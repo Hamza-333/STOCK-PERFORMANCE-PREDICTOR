@@ -1,34 +1,10 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn import datasets, svm, preprocessing
-from datapackage import Package
-import os, time
 from datetime import datetime
 import yahoo_fin.stock_info as yf
-import html5lib
 import numpy as np
-
-# package = Package('https://datahub.io/core/s-and-p-500-companies-financials/datapackage.json')
-
-# for resource in package.resources:
-#     if resource.descriptor['datahub']['type'] == 'derived/csv':
-#         data = resource.read()
-
-# def create_df():
-
-#     df = pd.DataFrame(data, columns = ['Ticker', 'Name', 'Sector', 'Price', 'P/E', 'Dividend', 'E/S', '52 Week Low'
-#                                     , '52 Week High', 'Market Cap', 'EBITDA', 'Price/Sales', 'Price/Book', 'SEC'])
-#     save = 'data.csv'
-#     # df.to_csv(save)
-#     print(df['Name'][:5])
-
-# create_df()
-# sp500 = yf.tickers_sp500()
-# f = open('sp500.csv', 'w')
-# f.write(','.join(sp500))
-# f.close()
-# stats = yf.get_stats('MSFT')
-# stats.to_csv('msft.csv')
+from collections import Counter
 data = pd.read_csv('msft.csv')
 att = data['Attribute'].to_list()
 att.insert(0, 'Ticker')
@@ -37,31 +13,20 @@ val.insert(0, 'MSFT')
 
 
 d = {}
-# i = 0
+
 for i in range(len(att)):
-    # print(val[i])
+
     if att[i].startswith('Shares') or att[i].startswith('Short'):
         pass
     else:
         d[att[i]] = []
-    # print(df[att[i]])
-    # i += 1
-# df = pd.DataFrame(d)
-# try:
-#     df = pd.DataFrame([val[0]], columns = att)
-# print(df)
-# except Exception as e:
-#     print(e)
+
 
 def create_df(d):
     with open('sp500.csv', 'r') as f:
         sp500 = f.read()
     sp500 = (sp500.split(','))
-    # sp500_random = np.random.permutation(sp500)
 
-
-    # print(sp500)
-    
     for comp in sp500[:25]:
         data = yf.get_stats(comp)
         att = data['Attribute'].to_list()
@@ -85,13 +50,11 @@ def clean_data():
     for num in df.columns:
         df[num] = df[num].fillna(0)
         for val in range(len(df[num])):
-            # df[num][val] = 'hello'
-            # print(type(df[num][val]), df[num][val])
+
             if isinstance(df[num][val], str):
                 if ',' in df[num][val]:
                     pass
                 elif 'M' in df[num][val]:
-                    # print('heloo')
                     try:
                         df[num][val] = float(df[num][val][:-1])
                         df[num][val] *= 1000000
@@ -159,7 +122,7 @@ def Performance():
             stock_change = round(((end_price - first_price) / first_price) * 100, 2)
             sp500_change = round(((sp500_df.values[-1][-3] - sp500_df.values[0][-3]) / sp500_df.values[0][-3]) * 100, 2)
             diff = stock_change - sp500_change
-            # print(diff)
+
             if diff > 5:
                 tmp['Performance'].append('Outperform')
             else:
@@ -204,24 +167,41 @@ def Dataset():
     return X, y, Z
 
 def Analysis():
-    test_size = 12
+    test_size = 10
 
     X, y, Z = Dataset()
     
     invest = []
     clf = svm.SVC(kernel = 'linear', C= 1.0)
     clf.fit(X[:-test_size], y[:-test_size])
-    # print(X[:-test_size])
+   
     count = 0
-    # print(clf.predict(X[-1]))
+
     for i in range(test_size + 1):
-        # print(X[-i])
+
         if clf.predict([X[-i]])[0] == y[-i]:
             count += 1
         if clf.predict([X[i]])[0] == 1:
             invest.append(Z[i])
 
     print('Accuracy:', (count/test_size) * 100)
-    print(invest)
-Analysis()
-# Dataset()
+
+    return invest
+if __name__ == '__main__':
+    create_df(d)
+    clean_data()
+    historic_data()
+    Performance
+    iterations = 20
+    common_lst = []
+    for i in range(iterations):
+        lst = Analysis()
+        for stock in lst:
+            common_lst.append(stock)
+    final = []
+    x = Counter(common_lst)
+    for stock in x:
+        if x[stock] >= iterations * 0.25:
+            final.append(stock)
+    print('Companies to invest:', final)
+
