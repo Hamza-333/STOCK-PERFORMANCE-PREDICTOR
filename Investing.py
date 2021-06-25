@@ -91,11 +91,11 @@ def historic_data():
     with open('sp500.csv', 'r') as f:
         sp500 = f.read()
     sp500 = (sp500.split(','))
-    df = yf.get_data(sp500[0], start_date = '01/04/2020', end_date = '01/04/2021', interval = '1mo')
+    df = yf.get_data(sp500[0], start_date = '02/04/2020', end_date = '02/04/2021', interval = '1mo')
     for i in range(1, 25):
-        d = yf.get_data(sp500[i], start_date = '01/04/2020', end_date = '01/04/2021', interval = '1mo')
+        d = yf.get_data(sp500[i], start_date = '02/04/2020', end_date = '02/04/2021', interval = '1mo')
         df = df.append(d, ignore_index = False)
-    sp500_df = yf.get_data('^GSPC', start_date = '01/04/2020', end_date = '01/04/2021', interval = '1mo')
+    sp500_df = yf.get_data('^GSPC', start_date = '02/04/2020', end_date = '02/04/2021', interval = '1mo')
   
    
     df.to_csv('historic_data.csv')
@@ -108,8 +108,8 @@ def Performance():
     sp500_df = pd.read_csv('sp500_data.csv')
 
     tmp = {'Performance': []}
-    start_date = '2020-02-01'
-    end_date = '2021-01-01'
+    start_date = '2020-02-02'
+    end_date = '2021-01-02'
     flag = True
     for row in range(len(historic_df.values) - 1):
         ticker = historic_df.values[row][-1]
@@ -191,7 +191,7 @@ if __name__ == '__main__':
     create_df(d)
     clean_data()
     historic_data()
-    Performance
+    Performance()
     iterations = 20
     common_lst = []
     for i in range(iterations):
